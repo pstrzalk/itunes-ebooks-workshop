@@ -1,6 +1,6 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import * as yup from 'yup';
-import { fetchEbooks, setEbooks } from './itunesSlice';
+import { dropEbook, Ebook, fetchEbooks, setEbooks, setStarVisibility } from './itunesSlice';
 import { PayloadActionFromCreator } from '../counter/counterSaga';
 
 const ebookSchema = yup.object({
@@ -14,6 +14,14 @@ const ebookSchema = yup.object({
 });
 
 type ApiEbook = yup.InferType<typeof ebookSchema>;
+
+export async function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function showStar(ebook: Ebook) {
+  console.log('showing star for ', ebook);
+}
 
 export async function getEbooks(searchTerm: string): Promise<ApiEbook[]> {
   const response = await fetch(
@@ -44,6 +52,19 @@ export function* onFetchEbooks(
   }
 }
 
+export function* onDropEbook(
+  action: PayloadActionFromCreator<typeof dropEbook>
+) {
+  console.log('onDropEbook start', action.payload);
+
+  yield put(setStarVisibility(true));
+  yield call(wait, 500);
+  yield put(setStarVisibility(false));
+
+  console.log('onDropEbook end', action.payload);
+}
+
 export function* itunesSaga() {
   yield takeLatest(fetchEbooks.type, onFetchEbooks);
+  yield takeEvery(dropEbook.type, onDropEbook);
 }
