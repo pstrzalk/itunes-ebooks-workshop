@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import styles from './App.module.css';
-function TitleDisplay({ title }) {
+function TitleDisplay({ title }: { title: string }) {
   return (
     <div>
       <p>{title}</p>
@@ -8,7 +8,7 @@ function TitleDisplay({ title }) {
   )
 }
 
-function App({title}) {
+function App({ title }: { title: string }) {
   return (
     <div className={styles["App"]}>
       <header className={styles["App-header"]}>
